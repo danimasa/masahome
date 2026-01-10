@@ -1,0 +1,12 @@
+[
+  {
+    "fs": "OneDrive:",
+    "mountPoint": "/hostfs/home/danimasa/OneDrive",
+    "mountOpt": {
+      "AllowOther": true
+    },
+    "vfsOpt": {
+      "CacheMode": "full"
+    }
+  }
+]

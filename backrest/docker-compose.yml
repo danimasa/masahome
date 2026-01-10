@@ -1,0 +1,18 @@
+services:
+  backrest:
+    image: garethgeorge/backrest:latest
+    container_name: backrest
+    volumes:
+      - ${DATA_PATH}/backrest/data:/data
+      - ${DATA_PATH}/backrest/config:/config
+      - ${DATA_PATH}/backrest/cache:/cache
+      - ${DATA_PATH}:/userdata
+      - ${DATA_PATH}/rclone/config:/root/.config/rclone
+    environment:
+      - BACKREST_DATA=/data
+      - BACKREST_CONFIG=/config/config.json
+      - XDG_CACHE_HOME=/cache
+      - TZ=America/Sao_Paulo
+    restart: unless-stopped
+    ports:
+      - "9898:9898"
