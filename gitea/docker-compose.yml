@@ -1,0 +1,26 @@
+networks:
+  gitea:
+    external: false
+  proxy:
+    external: true
+
+services:
+  server:
+    image: docker.gitea.com/gitea:1.25.3
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    restart: always
+    networks:
+      - gitea
+      - proxy
+    volumes:
+      - ${DATA_PATH}/gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.gitea.rule=Host(`gitea.masahome`)"
+      - "traefik.http.routers.gitea.entrypoints=web"
+      - "traefik.http.services.gitea.loadbalancer.server.port=80"
