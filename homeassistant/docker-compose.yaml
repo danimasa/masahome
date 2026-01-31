@@ -13,14 +13,30 @@ services:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
     extra_hosts:
       - "201.16.128.30:201.16.128.30"
+    ports:
+      - 21063:21063
+      - 21064:21064
     networks:
       - proxy
+      - hass
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hass.rule=Host(`hass.masahome.online`)"
       - "traefik.http.routers.hass.entrypoints=web"
       - "traefik.http.services.hass.loadbalancer.server.port=8123"
 
+  mdns-reflector:
+    image: flungo/avahi:latest
+    restart: unless-stopped
+    networks:
+      - physical
+      - hass
+    environment:
+      - "REFLECTOR_ENABLE_REFLECTOR=yes"
+
 networks:
   proxy:
     external: true
+  physical:
+    external: true
+  hass:
