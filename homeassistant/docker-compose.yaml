@@ -1,0 +1,26 @@
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ${DATA_PATH}/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    extra_hosts:
+      - "201.16.128.30:201.16.128.30"
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hass.rule=Host(`hass.masahome.online`)"
+      - "traefik.http.routers.hass.entrypoints=web"
+      - "traefik.http.services.hass.loadbalancer.server.port=8123"
+
+networks:
+  proxy:
+    external: true
