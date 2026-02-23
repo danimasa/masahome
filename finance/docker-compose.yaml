@@ -1,0 +1,16 @@
+services:
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ^YYU5gfV$QDu#j
+
+  pluggy:
+    build: .
+    environment:
+      PLUGGY_CLIENT_ID: "df19a5a8-617d-426e-a2ed-4601aca7559d"
+      PLUGGY_CLIENT_SECRET: "dea4aafa-a24a-4320-a1af-119021668f69"
+      MONGO_CONNECTION_STRING: "mongodb://root:^YYU5gfV$QDu#j@mongo:27017/"
