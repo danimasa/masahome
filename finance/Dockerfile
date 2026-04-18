@@ -13,5 +13,6 @@ RUN chmod 0644 /etc/cron.d/my-cron-job && \
     touch /var/log/cron.log
 
 COPY main.py .
+COPY entrypoint.sh /entrypoint.sh
 
-CMD ["cron", "-f"]
+CMD ["/entrypoint.sh"]

@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: odoo_db
+    container_name: odoo_foto_db
     image: postgres:16
     user: root
     environment:
@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=postgres
     restart: unless-stopped
     volumes:
-      - ${DATA_PATH}/postgres:/var/lib/postgresql/data
+      - ${DATA_PATH}/postgres-foto:/var/lib/postgresql/data
     networks:
       - odoo
 
@@ -20,21 +20,21 @@ services:
       - db
     restart: unless-stopped
     environment:
-      - HOST=odoo_db
+      - HOST=odoo_foto_db
       - USER=odoo
       - PASSWORD=odoo19@2026
       - TZ=America/Sao_Paulo
     volumes:
-      - ${DATA_PATH}/odoo/web-data:/var/lib/odoo
-      - ${DATA_PATH}/odoo/addons:/mnt/extra-addons
+      - ${DATA_PATH}/odoo-foto/web-data:/var/lib/odoo
+      - ${DATA_PATH}/odoo-foto/addons:/mnt/extra-addons
     networks:
       - proxy
       - odoo
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.odoo.rule=Host(`odoo.masahome.online`)"
-      - "traefik.http.routers.odoo.entrypoints=web"
-      - "traefik.http.services.odoo.loadbalancer.server.port=8069"
+      - "traefik.http.routers.odoofoto.rule=Host(`erpfoto.masahome.online`)"
+      - "traefik.http.routers.odoofoto.entrypoints=web"
+      - "traefik.http.services.odoofoto.loadbalancer.server.port=8069"
 
 networks:
   proxy:

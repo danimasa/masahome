@@ -4,13 +4,47 @@ services:
     restart: unless-stopped
     ports:
       - 27017:27017
+    networks:
+      - finance
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ^YYU5gfV$QDu#j
+    command: ["--bind_ip_all"]
 
   pluggy:
     build: .
+    restart: unless-stopped
+    networks:
+      - finance
     environment:
       PLUGGY_CLIENT_ID: "df19a5a8-617d-426e-a2ed-4601aca7559d"
       PLUGGY_CLIENT_SECRET: "dea4aafa-a24a-4320-a1af-119021668f69"
       MONGO_CONNECTION_STRING: "mongodb://root:^YYU5gfV$QDu#j@mongo:27017/"
+
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    shm_size: 128mb
+    networks:
+      - finance
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: 2ypVeTQNNF2G@j
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    networks:
+      - proxy
+      - finance
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.adminer.rule=Host(`adminer.masahome`)"
+      - "traefik.http.routers.adminer.entrypoints=web"
+      - "traefik.http.services.adminer.loadbalancer.server.port=8080"
+
+networks:
+  proxy:
+    external: true
+  finance:
