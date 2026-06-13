@@ -1,8 +1,16 @@
+import logging
 import os
 from datetime import date, datetime, timedelta
 
 import requests
+from apscheduler.schedulers.blocking import BlockingScheduler
 from pymongo import MongoClient
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 items = {
     "bradesco": {
@@ -68,42 +76,59 @@ def get_transactions(accountId, from_date, apiKey):
     return response.json()
 
 
-apiKey = authenticate()
-mg_conn_str = os.getenv("MONGO_CONNECTION_STRING")
-mg_client = MongoClient(mg_conn_str)
-db = mg_client["finance"]
+def run_job():
+    logger.info("Starting Pluggy sync job")
+    apiKey = authenticate()
+    mg_conn_str = os.getenv("MONGO_CONNECTION_STRING")
+    mg_client = MongoClient(mg_conn_str)
+    db = mg_client["finance"]
 
-info = db["info"]
-trans = db["transactions"]
+    info = db["info"]
+    trans = db["transactions"]
 
-today = date.today()
-last_update = today - timedelta(days=1)
-infos = info.find_one()
-if infos is not None:
-    last_update = infos["last_update"].date()
+    today = date.today()
+    last_update = today - timedelta(days=1)
+    infos = info.find_one()
+    if infos is not None:
+        last_update = infos["last_update"].date()
 
-for bank in items:
-    accounts = get_accounts(items[bank]["id"], apiKey)
-    filtered_accounts = [
-        acc for acc in accounts["results"] if acc["subtype"] in items[bank]["types"]
-    ]
+    try:
+        for bank in items:
+            accounts = get_accounts(items[bank]["id"], apiKey)
+            filtered_accounts = [
+                acc
+                for acc in accounts["results"]
+                if acc["subtype"] in items[bank]["types"]
+            ]
 
-    for account in filtered_accounts:
-        transactions = get_transactions(
-            account["id"],
-            last_update.isoformat(),
-            apiKey,
-        )["results"]
+            for account in filtered_accounts:
+                transactions = get_transactions(
+                    account["id"],
+                    last_update.isoformat(),
+                    apiKey,
+                )["results"]
 
-        for tr in transactions:
-            tr["bank"] = bank
+                for tr in transactions:
+                    tr["bank"] = bank
 
-        if len(transactions) > 0:
-            trans.insert_many(transactions)
+                if len(transactions) > 0:
+                    trans.insert_many(transactions)
 
-        print(f"Inserted {len(transactions)} transactions in {bank}")
+                logger.info("Inserted %d transactions in %s", len(transactions), bank)
 
-last_update = datetime.combine(today, datetime.min.time())
-info.replace_one({}, {"last_update": last_update}, upsert=True)
+        last_update = datetime.combine(today, datetime.min.time())
+        info.replace_one({}, {"last_update": last_update}, upsert=True)
+        logger.info("Pluggy sync job finished successfully")
+    finally:
+        mg_client.close()
 
-mg_client.close()
+
+if __name__ == "__main__":
+    scheduler = BlockingScheduler(timezone=os.getenv("TZ", "America/Sao_Paulo"))
+    scheduler.add_job(run_job, "cron", hour=2, minute=0, id="pluggy_daily_sync")
+    logger.info("Scheduler started: running daily at 02:00 (%s)", scheduler.timezone)
+
+    if os.getenv("RUN_ON_STARTUP", "false").lower() == "true":
+        run_job()
+
+    scheduler.start()

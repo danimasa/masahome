@@ -20,6 +20,7 @@ services:
       PLUGGY_CLIENT_ID: "df19a5a8-617d-426e-a2ed-4601aca7559d"
       PLUGGY_CLIENT_SECRET: "dea4aafa-a24a-4320-a1af-119021668f69"
       MONGO_CONNECTION_STRING: "mongodb://root:^YYU5gfV$QDu#j@mongo:27017/"
+      TZ: America/Sao_Paulo
 
   postgres:
     image: postgres:18
