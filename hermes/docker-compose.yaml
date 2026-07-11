@@ -19,6 +19,8 @@ services:
       - HERMES_DASHBOARD_INSECURE=1
       - NOTION_API_KEY=${NOTION_API_KEY}
       - OBSIDIAN_VAULT_PATH=${OBSIDIAN_VAULT_PATH}
+      - HONCHO_API_KEY=${HONCHO_API_KEY}
+      - WIKI_PATH=${WIKI_PATH}
     deploy:
       resources:
         limits:
