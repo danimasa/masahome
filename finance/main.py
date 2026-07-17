@@ -66,6 +66,7 @@ TRANSACTIONS_FILE = "src/transactions.beancount"
 # Pluggy API
 # ---------------------------------------------------------------------------
 
+
 def authenticate():
     client_id = os.getenv("PLUGGY_CLIENT_ID")
     client_secret = os.getenv("PLUGGY_CLIENT_SECRET")
@@ -118,6 +119,7 @@ def get_transactions(accountId, from_date, apiKey):
 # Step 1: Fetch transactions from Pluggy and store in MongoDB
 # ---------------------------------------------------------------------------
 
+
 def fetch_transactions(apiKey, db):
     info = db["info"]
     trans = db["transactions"]
@@ -131,9 +133,7 @@ def fetch_transactions(apiKey, db):
     for bank in items:
         accounts = get_accounts(items[bank]["id"], apiKey)
         filtered_accounts = [
-            acc
-            for acc in accounts["results"]
-            if acc["subtype"] in items[bank]["types"]
+            acc for acc in accounts["results"] if acc["subtype"] in items[bank]["types"]
         ]
 
         for account in filtered_accounts:
@@ -160,16 +160,6 @@ def fetch_transactions(apiKey, db):
 # Step 2: Git operations
 # ---------------------------------------------------------------------------
 
-def _build_auth_url(repo_url, username, password):
-    parsed = urlparse(repo_url)
-    netloc = parsed.netloc
-    if username:
-        creds = quote(username, safe="")
-        if password:
-            creds += ":" + quote(password, safe="")
-        netloc = f"{creds}@{parsed.netloc}"
-    return f"{parsed.scheme}://{netloc}{parsed.path}"
-
 
 def _git(args, repo_dir, check=True):
     result = subprocess.run(
@@ -185,7 +175,7 @@ def _git(args, repo_dir, check=True):
     return result
 
 
-def sync_repo(repo_dir, repo_url, username, password, branch):
+def sync_repo(repo_dir, repo_url, branch):
     repo_path = Path(repo_dir)
     git_dir = repo_path / ".git"
 
@@ -195,10 +185,9 @@ def sync_repo(repo_dir, repo_url, username, password, branch):
         _git(["reset", "--hard", f"origin/{branch}"], repo_dir)
     else:
         logger.info("Cloning repository from %s", repo_url)
-        auth_url = _build_auth_url(repo_url, username, password)
         repo_path.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run(
-            ["git", "clone", "--branch", branch, auth_url, str(repo_path)],
+            ["git", "clone", "--branch", branch, repo_url, str(repo_path)],
             capture_output=True,
             text=True,
             check=True,
@@ -233,6 +222,7 @@ def commit_and_push(repo_dir, message, branch):
 # ---------------------------------------------------------------------------
 # Step 3-4: Classification with scikit-learn
 # ---------------------------------------------------------------------------
+
 
 def parse_beancount_for_training(text):
     entries = []
@@ -307,6 +297,7 @@ def predict_category(classifier, vectorizer, description):
 # Step 5: Format and write beancount entries
 # ---------------------------------------------------------------------------
 
+
 def get_source_account(tr):
     bank = tr.get("bank", "")
     subtype = tr.get("account_subtype", "")
@@ -351,6 +342,7 @@ def format_beancount_entry(tr, category, source_account):
 # Step 9: Webhook notification
 # ---------------------------------------------------------------------------
 
+
 def notify_webhook(url, transactions):
     if not url:
         return
@@ -372,6 +364,7 @@ def notify_webhook(url, transactions):
 # Main job
 # ---------------------------------------------------------------------------
 
+
 def run_job():
     logger.info("Starting finance sync job")
 
@@ -381,8 +374,6 @@ def run_job():
 
     repo_dir = os.getenv("REPO_DIR", "/repo")
     git_repo_url = os.getenv("GIT_REPO_URL", "")
-    git_username = os.getenv("GIT_USERNAME", "")
-    git_password = os.getenv("GIT_PASSWORD", "")
     git_branch = os.getenv("GIT_BRANCH", "main")
 
     try:
@@ -392,7 +383,7 @@ def run_job():
         logger.info("Pluggy sync completed")
 
         # Step 2: Pull beancount repository
-        sync_repo(repo_dir, git_repo_url, git_username, git_password, git_branch)
+        sync_repo(repo_dir, git_repo_url, git_branch)
         logger.info("Repository synced")
 
         # Step 3: Get unclassified transactions from MongoDB

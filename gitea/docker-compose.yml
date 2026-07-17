@@ -21,6 +21,8 @@ services:
       - ${DATA_PATH}/gitea:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "222:22"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.gitea.rule=Host(`gitea.masahome`)"

@@ -16,20 +16,22 @@ services:
     restart: unless-stopped
     networks:
       - finance
+    extra_hosts:
+      - "gitea.masahome:172.17.0.1"
+    user: "1000:1000"
     environment:
       PLUGGY_CLIENT_ID: "df19a5a8-617d-426e-a2ed-4601aca7559d"
       PLUGGY_CLIENT_SECRET: "dea4aafa-a24a-4320-a1af-119021668f69"
       MONGO_CONNECTION_STRING: "mongodb://root:^YYU5gfV$QDu#j@mongo:27017/"
       TZ: America/Sao_Paulo
-      GIT_REPO_URL: "http://gitea.masahome/danimasa/personal-finance.git"
-      GIT_USERNAME: "danimasa"
-      GIT_PASSWORD: ""
+      GIT_REPO_URL: "git@gitea.masahome/danimasa/personal-finance.git"
       GIT_BRANCH: "main"
       GIT_USER_NAME: "Finance Auto Bot"
       GIT_USER_EMAIL: "bot@masahome"
+      REPO_DIR: "/home/app/personal-finance"
       WEBHOOK_URL: ""
     volumes:
-      - repo_data:/repo
+      - ~/.ssh:/home/app/.ssh:ro
 
   postgres:
     image: postgres:18
@@ -84,6 +86,3 @@ networks:
   proxy:
     external: true
   finance:
-
-volumes:
-  repo_data:
