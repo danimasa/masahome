@@ -20,14 +20,14 @@ logger = logging.getLogger(__name__)
 
 items = {
     "bradesco": {
-        "id": "61500a5e-82a7-4eda-bd26-29a891f0903a",
+        "id": "be30d733-5dde-4eed-bac7-c09c1ff56cf4",
         "types": ["CHECKING_ACCOUNT"],
         "accounts": {
             "CHECKING_ACCOUNT": "Assets:Brad:Corrente",
         },
     },
     "xp": {
-        "id": "07f18bf8-6470-48f3-b3ca-a06b86e04095",
+        "id": "ba2f63f4-1918-424a-8d54-714b9e0592e6",
         "types": ["CREDIT_CARD", "CHECKING_ACCOUNT"],
         "accounts": {
             "CHECKING_ACCOUNT": "Assets:XP:Corrente",
@@ -35,7 +35,7 @@ items = {
         },
     },
     "nubank": {
-        "id": "5cbb88b7-aaa3-44b0-acbb-3c871f36adb3",
+        "id": "6b9e55c9-489b-475c-b58a-a094e8ede995",
         "types": ["CHECKING_ACCOUNT", "CREDIT_CARD"],
         "accounts": {
             "CHECKING_ACCOUNT": "Assets:Nu:Corrente",
