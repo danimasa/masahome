@@ -331,7 +331,7 @@ def format_beancount_entry(tr, category, source_account):
         category_signed = -abs_amount
 
     lines = [
-        f'{tx_date} * "{description}"',
+        f'{tx_date} * "{description}" ""',
         f"  {source_account:<40s} {source_signed:.2f} {currency}",
         f"  {category:<40s} {category_signed:.2f} {currency}",
     ]
