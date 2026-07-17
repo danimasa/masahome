@@ -24,7 +24,7 @@ services:
       PLUGGY_CLIENT_SECRET: "dea4aafa-a24a-4320-a1af-119021668f69"
       MONGO_CONNECTION_STRING: "mongodb://root:^YYU5gfV$QDu#j@mongo:27017/"
       TZ: America/Sao_Paulo
-      GIT_REPO_URL: "git@gitea.masahome/danimasa/personal-finance.git"
+      GIT_REPO_URL: "git@gitea.masahome:danimasa/personal-finance.git"
       GIT_BRANCH: "main"
       GIT_USER_NAME: "Finance Auto Bot"
       GIT_USER_EMAIL: "bot@masahome"
