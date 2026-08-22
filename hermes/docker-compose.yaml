@@ -10,6 +10,8 @@ services:
     volumes:
       - ${DATA_PATH}/hermes:/opt/data
       - ${HOME}/OneDrive:/onedrive
+    networks:
+      - finance_finance
     environment:
       - HERMES_DASHBOARD=1
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -22,8 +24,13 @@ services:
       - WIKI_PATH=${WIKI_PATH}
       - HERMES_DASHBOARD_BASIC_AUTH_USERNAME=${HERMES_DASHBOARD_BASIC_AUTH_USERNAME}
       - HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=${HERMES_DASHBOARD_BASIC_AUTH_PASSWORD}
+      - METABASE_API_KEY=${METABASE_API_KEY}
     deploy:
       resources:
         limits:
           memory: 4G
           cpus: "2.0"
+
+networks:
+  finance_finance:
+    external: true

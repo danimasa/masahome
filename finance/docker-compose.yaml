@@ -60,6 +60,7 @@ services:
   metabase:
     image: metabase/metabase:latest
     restart: unless-stopped
+    container_name: metabase
     networks:
       - finance
       - proxy
