@@ -456,8 +456,8 @@ def run_job():
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler(timezone=os.getenv("TZ", "America/Sao_Paulo"))
-    scheduler.add_job(run_job, "cron", hour=2, minute=0, id="finance_daily_sync")
-    logger.info("Scheduler started: running daily at 02:00 (%s)", scheduler.timezone)
+    scheduler.add_job(run_job, "cron", hour=7, minute=0, id="finance_daily_sync")
+    logger.info("Scheduler started: running daily at 07:00 (%s)", scheduler.timezone)
 
     if os.getenv("RUN_ON_STARTUP", "false").lower() == "true":
         run_job()

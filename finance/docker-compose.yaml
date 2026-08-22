@@ -30,6 +30,7 @@ services:
       GIT_USER_EMAIL: "bot@masahome"
       REPO_DIR: "/home/app/personal-finance"
       WEBHOOK_URL: ""
+      RUN_ON_STARTUP: true
     volumes:
       - ~/.ssh:/home/app/.ssh:ro
 
