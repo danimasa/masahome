@@ -1,0 +1,35 @@
+services:
+  db_recipes:
+    restart: always
+    image: postgres:16-alpine
+    volumes:
+      - ${DATA_PATH}/tandoor/postgres:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    networks:
+      - default
+
+  web_recipes:
+    restart: always
+    container_name: recipes
+    image: vabene1111/recipes
+    env_file:
+      - ./.env
+    volumes:
+      - ${DATA_PATH}/tandoor/static:/opt/recipes/staticfiles
+      - ${DATA_PATH}/tandoor/media:/opt/recipes/mediafiles
+    depends_on:
+      - db_recipes
+    labels: # traefik example labels
+      - "traefik.enable=true"
+      - "traefik.http.routers.recipes.rule=Host(`receitas.masahome.online`)"
+      - "traefik.http.routers.recipes.entrypoints=web"
+      - "traefik.http.services.recipes.loadbalancer.server.port=80"
+    networks:
+      - default
+      - proxy
+
+networks:
+  default:
+  proxy:
+    external: true
