@@ -11,7 +11,7 @@ services:
       - ${DATA_PATH}/hermes:/opt/data
       - ${HOME}/OneDrive:/onedrive
     networks:
-      - finance_finance
+      - proxy
     environment:
       - HERMES_DASHBOARD=1
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -32,5 +32,5 @@ services:
           cpus: "2.0"
 
 networks:
-  finance_finance:
+  proxy:
     external: true

@@ -4,7 +4,9 @@ services:
     container_name: "traefik"
     restart: unless-stopped
     networks:
-      - proxy
+      proxy:
+        aliases:
+          - metabase.masahome
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
